@@ -1,4 +1,5 @@
 const CategoryModel = require('../models/categoryModel');
+const apiError = require('../utils/apiError')
 const slugify = require('slugify')
 const asyncHandler=require('express-async-handler')
 
@@ -19,13 +20,14 @@ exports.getCategories = asyncHandler(
 // params : categoryName 
 // route : GET / api / v1 /categories
 // accesss : public
-exports.getSpecificCategory = asyncHandler(async (req, res) => {
+exports.getSpecificCategory = asyncHandler(async (req, res,next) => {
   const {categoryName} = req.params;
   const categories = await CategoryModel.find({})
   const filteredCategories = categories.filter((category) =>
     category.name === categoryName)
   if(filteredCategories.length === 0 ){
-    res.status(400).json({msg :`did not find ${categoryName}`}) 
+    // res.status(400).json({msg :`did not find ${categoryName}`}) 
+    return next(new apiErroe(`did not find ${categoryName}` , 400))
   }
   else{
         res.status(200).json({ data: filteredCategories});
@@ -47,7 +49,7 @@ exports.createCategory = asyncHandler( async (req, res) =>{
 // params  : catID
 
 exports.updateCategory = asyncHandler(
-  async (req,res) =>{
+  async (req,res,next) =>{
     const {id} =req.params
     const {name} = req.body
     const category =await CategoryModel.findOneAndUpdate(
@@ -56,8 +58,10 @@ exports.updateCategory = asyncHandler(
       {new : true}
       )
       if(!category){
-        res.status(400).json({msg :`did not find ${id}`}) 
+        // res.status(400).json({msg :`did not find ${id}`}) 
+        return next(new apiErroe(`did not find ${categoryName}` , 400))
       }
+      
       else{
             res.status(200).json({ data: category});
           }
@@ -70,11 +74,12 @@ exports.updateCategory = asyncHandler(
 // params  : catID
 
 exports.deleteCtegory = asyncHandler(
-  async (req,res)=>{
+  async (req,res,next)=>{
     const {id}  = req.params
     const category = await CategoryModel.findByIdAndDelete(id)
     if(!category){
-      res.status(400).json({msg :`did not find ${id}`}) 
+      // res.status(400).json({msg :`did not find ${id}`}) 
+      return next(new apiErroe(`did not find ${categoryName}` , 400))
     }
     else{
           res.status(200).json();
