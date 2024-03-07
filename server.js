@@ -6,7 +6,7 @@ const apiError = require('./utils/apiError')
 const globlaError = require('./middlewares/errorsMiddleware')
 const dbConnection = require("./config/database");
 const categoryRoute = require("./routes/categoryRoute");
-
+const subCategoryRoute = require("./routes/subCategoryRoute");
 // Connect with db
 dbConnection();
 
@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === "development") {
 
 // Mount Routes
 app.use("/api/v1/categories", categoryRoute);
-
+app.use("/api/v1/subcategories", subCategoryRoute)
 // catch error if user enterd wrong path , [not mounted - dose not exists]
 app.all('*',(req,res,next)=>{
   // next sends the error msg to the global error handler
